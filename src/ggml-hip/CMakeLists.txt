@@ -67,8 +67,10 @@ file(GLOB   SRCS "../ggml-cuda/template-instances/fattn-mma*.cu")
 list(APPEND GGML_SOURCES_ROCM ${SRCS})
 file(GLOB   SRCS "../ggml-cuda/template-instances/mmq*.cu")
 list(APPEND GGML_SOURCES_ROCM ${SRCS})
-file(GLOB   SRCS "../ggml-cuda/template-instances/mmf*.cu")
-list(APPEND GGML_SOURCES_ROCM ${SRCS})
+if (NOT GGML_HIP_NO_MMF)
+    file(GLOB   SRCS "../ggml-cuda/template-instances/mmf*.cu")
+    list(APPEND GGML_SOURCES_ROCM ${SRCS})
+endif()
 
 if (GGML_CUDA_FA_ALL_QUANTS)
     file(GLOB   SRCS "../ggml-cuda/template-instances/fattn-vec*.cu")
@@ -124,6 +126,10 @@ endif()
 
 if (GGML_HIP_RCCL)
     add_compile_definitions(GGML_USE_NCCL) # RCCL has the same interface as NCCL.
+endif()
+
+if (GGML_HIP_NO_MMF)
+    add_compile_definitions(GGML_HIP_NO_MMF)
 endif()
 
 if (GGML_HIP_EXPORT_METRICS)
